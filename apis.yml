@@ -1,7 +1,12 @@
 aid: salesforcecom
-url: https://raw.githubusercontent.com/api-evangelist/salesforcecom/refs/heads/main/apis.yml
+url: 
+  https://raw.githubusercontent.com/api-evangelist/salesforcecom/refs/heads/main/apis.yml
 modified: '2026-03-24'
 apis: []
 common:
   - type: Website
     url: https://www.salesforcecom.com
+description: >-
+  Salesforce is a global leader in customer relationship management software, providing
+  cloud-based applications for sales, service, marketing, commerce, integration, analytics,
+  and platform development.
