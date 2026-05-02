@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://api-evangelist.github.io/salesforcecom/json-schema/salesforcecom-sobject-schema.json",
+  "title": "Salesforce sObject",
+  "description": "A Salesforce Standard or Custom Object record as returned by the Salesforce REST API",
+  "type": "object",
+  "properties": {
+    "Id": {
+      "type": "string",
+      "description": "Unique 18-character Salesforce record ID",
+      "pattern": "^[a-zA-Z0-9]{18}$"
+    },
+    "Name": {
+      "type": "string",
+      "description": "Name field of the record"
+    },
+    "CreatedDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the record was created"
+    },
+    "CreatedById": {
+      "type": "string",
+      "description": "ID of the user who created the record"
+    },
+    "LastModifiedDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the record was last modified"
+    },
+    "LastModifiedById": {
+      "type": "string",
+      "description": "ID of the user who last modified the record"
+    },
+    "OwnerId": {
+      "type": "string",
+      "description": "ID of the user or queue who owns the record"
+    },
+    "IsDeleted": {
+      "type": "boolean",
+      "description": "Whether the record has been soft-deleted (in recycle bin)"
+    },
+    "SystemModstamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "System timestamp of last modification including automated updates"
+    },
+    "attributes": {
+      "type": "object",
+      "description": "Salesforce metadata about the record including type and URL",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "API name of the sObject type (e.g. Account, Contact, Opportunity)"
+        },
+        "url": {
+          "type": "string",
+          "description": "REST API URL for this specific record"
+        }
+      }
+    }
+  },
+  "required": ["Id", "attributes"],
+  "additionalProperties": true
+}

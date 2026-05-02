@@ -1,0 +1,21 @@
+{
+  "title": "Salesforce sObject Structure",
+  "description": "JSON structure documentation for the Salesforce standard object record",
+  "type": "object",
+  "structure": {
+    "Id": "string(18-char) - Unique Salesforce record ID [required]",
+    "attributes": {
+      "type": "string - sObject API name (e.g. Account, Contact, Opportunity) [required]",
+      "url": "string - REST API URL for this record"
+    },
+    "Name": "string - Record name field",
+    "OwnerId": "string - Owner user/queue ID",
+    "CreatedDate": "string(date-time) - Creation timestamp",
+    "CreatedById": "string - Creator user ID",
+    "LastModifiedDate": "string(date-time) - Last modification timestamp",
+    "LastModifiedById": "string - Last modifier user ID",
+    "SystemModstamp": "string(date-time) - System modification timestamp",
+    "IsDeleted": "boolean - Soft-deleted indicator",
+    "custom_fields": "Additional fields specific to the sObject type or custom fields added to the org"
+  }
+}

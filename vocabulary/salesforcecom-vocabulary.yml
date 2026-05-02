@@ -1,0 +1,167 @@
+vocabulary:
+  title: Salesforce Platform Vocabulary
+  description: >-
+    Vocabulary and taxonomy for the Salesforce Platform APIs covering CRM,
+    cloud services, integration, AI, and developer tooling terminology.
+  version: '1.0'
+  created: '2026-05-02'
+  provider: Salesforce
+
+terms:
+
+  # Core CRM Entities
+  - term: sObject
+    definition: >-
+      Salesforce Object — any standard or custom data object stored in Salesforce.
+      Every record in Salesforce (Account, Contact, Opportunity, Case, Lead, or custom
+      object) is an sObject with a unique 18-character ID.
+    related: [Account, Contact, Opportunity, Lead, Case, Custom Object]
+    tags: [Core, Data Model]
+
+  - term: Account
+    definition: >-
+      A Salesforce standard object representing a company or organization. Accounts
+      are the central entity in the Salesforce data model, linked to Contacts,
+      Opportunities, Cases, and other objects.
+    related: [Contact, Opportunity, Case, sObject]
+    tags: [Standard Object, CRM]
+
+  - term: Contact
+    definition: >-
+      A Salesforce standard object representing an individual person associated with
+      an Account. Contacts store personal information, communication history, and
+      relationship context.
+    related: [Account, Lead, sObject]
+    tags: [Standard Object, CRM]
+
+  - term: Lead
+    definition: >-
+      A Salesforce standard object representing a prospective customer who has shown
+      interest. Leads can be converted to Accounts, Contacts, and Opportunities upon
+      qualification.
+    related: [Contact, Account, Opportunity, sObject]
+    tags: [Standard Object, CRM]
+
+  - term: Opportunity
+    definition: >-
+      A Salesforce standard object representing a potential revenue-generating deal.
+      Opportunities track deal stage, amount, close date, and associated products.
+    related: [Account, Contact, Quote, sObject]
+    tags: [Standard Object, CRM, Sales]
+
+  - term: Case
+    definition: >-
+      A Salesforce standard object representing a customer support issue or service
+      request. Cases track the full support lifecycle from submission to resolution.
+    related: [Account, Contact, sObject]
+    tags: [Standard Object, Service]
+
+  # API Concepts
+  - term: SOQL
+    definition: >-
+      Salesforce Object Query Language — a SELECT-based query language for querying
+      Salesforce data through the REST API. Similar to SQL but designed for the
+      Salesforce data model.
+    related: [SOSL, REST API, sObject]
+    tags: [Query Language, API]
+
+  - term: SOSL
+    definition: >-
+      Salesforce Object Search Language — a text-based search language for searching
+      across multiple Salesforce objects simultaneously through the REST API.
+    related: [SOQL, REST API]
+    tags: [Query Language, API]
+
+  - term: Org
+    definition: >-
+      Short for Organization — a specific Salesforce instance/tenant with its own
+      data, configuration, users, and customizations. Each Salesforce customer has
+      one or more orgs.
+    related: [Sandbox, Production, Trailhead Playground]
+    tags: [Infrastructure, Multi-Tenant]
+
+  - term: Apex
+    definition: >-
+      Salesforce's proprietary, Java-like object-oriented programming language that
+      runs on the Salesforce platform. Used to write triggers, classes, and REST
+      services deployed to Salesforce orgs.
+    related: [Trigger, Class, API]
+    tags: [Language, Development]
+
+  - term: Flow
+    definition: >-
+      Salesforce's no-code/low-code automation tool for building business process
+      automation, data manipulation, and integrations through a visual designer.
+    related: [Process Builder, Apex, Automation]
+    tags: [Automation, Low-Code]
+
+  - term: Lightning Web Component
+    definition: >-
+      A modern Salesforce UI component framework based on web standards (HTML, CSS,
+      JavaScript). Used to build custom user interface elements in Salesforce.
+    related: [Aura Component, Visualforce]
+    tags: [UI, Development]
+
+  - term: OAuth 2.0
+    definition: >-
+      The standard authorization protocol used by Salesforce APIs for authenticating
+      integrations. Supports Authorization Code, JWT Bearer, Device Flow, and other
+      grant types.
+    related: [Connected App, Access Token, Refresh Token]
+    tags: [Authentication, Security]
+
+  - term: Connected App
+    definition: >-
+      A Salesforce framework that enables external applications to integrate with
+      Salesforce using OAuth 2.0. Defines which APIs the app can access and the
+      authentication flow it uses.
+    related: [OAuth 2.0, API]
+    tags: [Authentication, Integration]
+
+  - term: Agentforce
+    definition: >-
+      Salesforce's AI agent platform launched in 2024-2025, enabling the creation
+      of autonomous AI agents that can complete tasks across Salesforce and integrated
+      systems. Part of the Salesforce Einstein AI portfolio.
+    related: [Einstein, Copilot, AI]
+    tags: [AI, Product]
+
+  - term: Einstein
+    definition: >-
+      Salesforce's AI and machine learning platform, embedded across Sales Cloud,
+      Service Cloud, Marketing Cloud, and other products. Provides predictions,
+      recommendations, and generative AI capabilities.
+    related: [Agentforce, AI, Predictions]
+    tags: [AI, Product]
+
+  - term: MuleSoft
+    definition: >-
+      Salesforce's integration and API management platform, acquired in 2018.
+      Provides Anypoint Platform for building, deploying, and managing APIs and
+      integrations across cloud and on-premise systems.
+    related: [API Management, Integration, iPaaS]
+    tags: [Product, Integration]
+
+  - term: Sandbox
+    definition: >-
+      A non-production Salesforce org used for development, testing, and training.
+      Sandboxes are copies of the production org with varying levels of data refresh
+      (Developer, Developer Pro, Partial, Full).
+    related: [Org, Production, Development]
+    tags: [Environment, Development]
+
+  - term: Metadata API
+    definition: >-
+      A Salesforce API used to retrieve, deploy, create, update, and delete org
+      customizations such as custom objects, page layouts, validation rules, and
+      workflow rules. Central to CI/CD pipelines.
+    related: [Salesforce DX, DevOps, sObject]
+    tags: [API, DevOps]
+
+  - term: Salesforce DX
+    definition: >-
+      Salesforce Developer Experience — a modern developer toolchain and methodology
+      for developing, testing, and deploying Salesforce customizations using
+      version control, scratch orgs, and CI/CD.
+    related: [Metadata API, Sandbox, CLI]
+    tags: [Development, DevOps]

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://api-evangelist.github.io/salesforcecom/json-schema/salesforcecom-query-result-schema.json",
+  "title": "Salesforce SOQL Query Result",
+  "description": "The response structure returned by the Salesforce REST API for SOQL query operations",
+  "type": "object",
+  "properties": {
+    "totalSize": {
+      "type": "integer",
+      "description": "Total number of records matching the query"
+    },
+    "done": {
+      "type": "boolean",
+      "description": "Whether all results have been returned. False if there are more pages."
+    },
+    "nextRecordsUrl": {
+      "type": "string",
+      "description": "URL to retrieve the next batch of records when done is false"
+    },
+    "records": {
+      "type": "array",
+      "description": "Array of sObject records returned by the query",
+      "items": {
+        "$ref": "#/$defs/sObject"
+      }
+    }
+  },
+  "$defs": {
+    "sObject": {
+      "type": "object",
+      "description": "A Salesforce record",
+      "properties": {
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["totalSize", "done", "records"],
+  "additionalProperties": false
+}
