@@ -1,0 +1,160 @@
+extends: spectral:oas
+rules:
+
+  # Salesforce REST API uses versioned paths like /services/data/v{version}/...
+  salesforce-versioned-path:
+    description: All Salesforce REST API paths must be versioned under /services/data/v{version}/
+    message: "Salesforce REST paths should start with /services/data/v{version}/ — found: {{path}}"
+    severity: warn
+    given: "$.paths[*]~"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^/services/data/v\\{version\\}/"
+
+  # All operations must have an operationId
+  operation-id-required:
+    description: Every operation must have an operationId for SDK generation and Postman
+    message: "Operation at {{path}} is missing operationId"
+    severity: error
+    given: "$.paths[*][get,post,patch,put,delete]"
+    then:
+      field: operationId
+      function: truthy
+
+  # operationIds must use camelCase (Salesforce convention)
+  salesforce-operation-id-camel-case:
+    description: Salesforce operationIds should use camelCase
+    message: "operationId '{{value}}' should use camelCase"
+    severity: warn
+    given: "$.paths[*][get,post,patch,put,delete].operationId"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[a-z][a-zA-Z0-9]+$"
+
+  # All operations must have at least one tag
+  operation-tags-required:
+    description: Every operation must be tagged for organization in API docs and Postman
+    message: "Operation at {{path}} is missing tags"
+    severity: warn
+    given: "$.paths[*][get,post,patch,put,delete]"
+    then:
+      field: tags
+      function: truthy
+
+  # sObject paths must include the sObjectName path parameter
+  salesforce-sobject-parameter:
+    description: Paths containing {sObjectName} must define it as a path parameter
+    message: "Path {{path}} uses {sObjectName} but sObjectName parameter is not defined"
+    severity: error
+    given: "$.paths[*][get,post,patch,put,delete][?(@.parameters)]"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: array
+
+  # version path parameter must be in every path operation
+  salesforce-version-parameter:
+    description: All Salesforce REST API operations must include the version path parameter
+    message: "Operation {{path}} should include the 'version' path parameter"
+    severity: warn
+    given: "$.paths['/services/data/v{version}/**'][get,post,patch,put,delete]"
+    then:
+      field: parameters
+      function: truthy
+
+  # Responses must include at least a 200 or 204 success response
+  response-success-required:
+    description: Every operation must define a success response (200, 201, or 204)
+    message: "Operation at {{path}} must have a 2xx success response"
+    severity: error
+    given: "$.paths[*][get,post,patch,put,delete].responses"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          anyOf:
+            - required: ['200']
+            - required: ['201']
+            - required: ['204']
+
+  # 401 Unauthorized response should be on all authenticated operations
+  salesforce-401-response:
+    description: All authenticated Salesforce operations should document 401 Unauthorized
+    message: "Authenticated operation at {{path}} should document 401 Unauthorized"
+    severity: info
+    given: "$.paths[*][get,post,patch,put,delete][?(@.security)]"
+    then:
+      field: responses.401
+      function: truthy
+
+  # Summary should be present on all operations
+  operation-summary-required:
+    description: All operations must have a summary for API docs readability
+    message: "Operation {{path}} is missing summary"
+    severity: warn
+    given: "$.paths[*][get,post,patch,put,delete]"
+    then:
+      field: summary
+      function: truthy
+
+  # Summaries must use Title Case (Salesforce convention)
+  salesforce-title-case-summary:
+    description: Salesforce operation summaries should use Title Case
+    message: "Summary '{{value}}' should use Title Case"
+    severity: info
+    given: "$.paths[*][get,post,patch,put,delete].summary"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[A-Z][a-zA-Z0-9 ]+$"
+
+  # PATCH (not PUT) for updates in Salesforce REST API
+  salesforce-use-patch-for-updates:
+    description: >-
+      Salesforce REST API uses PATCH for partial record updates, not PUT.
+      PUT is used only for upsert operations by external ID.
+    message: "Consider PATCH instead of PUT for record updates (Salesforce convention)"
+    severity: info
+    given: "$.paths[*].put"
+    then:
+      function: truthy
+
+  # Request body must have content type application/json
+  request-body-json:
+    description: Request bodies should specify application/json content type
+    message: "Request body at {{path}} should include application/json content type"
+    severity: warn
+    given: "$.paths[*][post,patch,put].requestBody.content"
+    then:
+      field: application/json
+      function: truthy
+
+  # 400 response should be documented for POST/PATCH operations
+  salesforce-400-for-mutations:
+    description: POST/PATCH operations should document 400 Bad Request for validation errors
+    message: "Mutation operation at {{path}} should document 400 Bad Request"
+    severity: info
+    given: "$.paths[*][post,patch].responses"
+    then:
+      field: '400'
+      function: truthy
+
+  # Schema $ref should be used instead of inline schemas for reusability
+  use-schema-refs:
+    description: >-
+      Prefer $ref to component schemas instead of inline schema definitions
+      for consistency and reuse across operations.
+    message: "Inline schema at {{path}} — consider using a $ref to components/schemas"
+    severity: info
+    given: "$.paths[*][get,post,patch,put,delete].responses[*].content[*].schema"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          oneOf:
+            - required: ['$ref']
+            - type: object

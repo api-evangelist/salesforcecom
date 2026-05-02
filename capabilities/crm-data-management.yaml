@@ -1,0 +1,242 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "Salesforce CRM Data Management"
+  description: >-
+    CRM data management workflow combining Salesforce REST API record operations,
+    SOQL querying, and SOSL search for managing accounts, contacts, leads,
+    opportunities, and cases. Used by sales ops teams, integration engineers,
+    and data pipelines to synchronize and manage CRM records programmatically.
+  tags:
+    - CRM
+    - Salesforce
+    - Data Management
+    - Records
+    - Query
+  created: "2026-05-02"
+  modified: "2026-05-02"
+
+binds:
+  - namespace: env
+    keys:
+      SALESFORCE_ACCESS_TOKEN: SALESFORCE_ACCESS_TOKEN
+      SALESFORCE_INSTANCE: SALESFORCE_INSTANCE
+
+capability:
+  consumes:
+    - import: salesforce-rest
+      location: ./shared/salesforce-rest.yaml
+
+  exposes:
+    - type: rest
+      port: 8080
+      namespace: crm-data-management-api
+      description: "Unified REST API for Salesforce CRM data management workflows."
+      resources:
+        - path: /v1/records/{sObjectName}
+          name: records-by-type
+          description: "Create new records by sObject type"
+          operations:
+            - method: POST
+              name: create-record
+              description: "Create a new Salesforce record"
+              call: "salesforce-rest.create-record"
+              with:
+                sObjectName: "rest.sObjectName"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/records/{sObjectName}/{id}
+          name: record-by-id
+          description: "Read, update, and delete individual records"
+          operations:
+            - method: GET
+              name: get-record
+              description: "Get a Salesforce record by sObject type and ID"
+              call: "salesforce-rest.get-record"
+              with:
+                sObjectName: "rest.sObjectName"
+                id: "rest.id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+            - method: PATCH
+              name: update-record
+              description: "Update fields on a Salesforce record"
+              call: "salesforce-rest.update-record"
+              with:
+                sObjectName: "rest.sObjectName"
+                id: "rest.id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+            - method: DELETE
+              name: delete-record
+              description: "Delete a Salesforce record"
+              call: "salesforce-rest.delete-record"
+              with:
+                sObjectName: "rest.sObjectName"
+                id: "rest.id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/query
+          name: soql-query
+          description: "SOQL query execution"
+          operations:
+            - method: GET
+              name: execute-query
+              description: "Execute a SOQL query"
+              call: "salesforce-rest.execute-query"
+              with:
+                q: "rest.q"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/search
+          name: sosl-search
+          description: "SOSL cross-object search"
+          operations:
+            - method: GET
+              name: execute-search
+              description: "Execute a SOSL search across multiple object types"
+              call: "salesforce-rest.execute-search"
+              with:
+                q: "rest.q"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/metadata/{sObjectName}
+          name: object-metadata
+          description: "sObject field metadata"
+          operations:
+            - method: GET
+              name: describe-sobject
+              description: "Get field definitions for a Salesforce object type"
+              call: "salesforce-rest.describe-sobject"
+              with:
+                sObjectName: "rest.sObjectName"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/limits
+          name: org-limits
+          description: "Org API usage limits"
+          operations:
+            - method: GET
+              name: get-org-limits
+              description: "Get current Salesforce org limits and API usage"
+              call: "salesforce-rest.get-org-limits"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9080
+      namespace: crm-data-management-mcp
+      transport: http
+      description: "MCP server for AI-assisted Salesforce CRM data management."
+      tools:
+        - name: query-records
+          description: "Query Salesforce records using SOQL (e.g., SELECT Id, Name FROM Account WHERE Industry = 'Technology')"
+          hints:
+            readOnly: true
+            idempotent: true
+            openWorld: true
+          call: "salesforce-rest.execute-query"
+          with:
+            q: "tools.q"
+          outputParameters:
+            - type: object
+              mapping: "$."
+
+        - name: search-records
+          description: "Search across multiple Salesforce object types using SOSL full-text search"
+          hints:
+            readOnly: true
+            idempotent: true
+            openWorld: true
+          call: "salesforce-rest.execute-search"
+          with:
+            q: "tools.q"
+          outputParameters:
+            - type: object
+              mapping: "$."
+
+        - name: get-record
+          description: "Retrieve a specific Salesforce CRM record by object type and ID"
+          hints:
+            readOnly: true
+            idempotent: true
+          call: "salesforce-rest.get-record"
+          with:
+            sObjectName: "tools.sObjectName"
+            id: "tools.id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+
+        - name: create-record
+          description: "Create a new Salesforce CRM record (Account, Contact, Lead, Opportunity, Case)"
+          hints:
+            readOnly: false
+          call: "salesforce-rest.create-record"
+          with:
+            sObjectName: "tools.sObjectName"
+          outputParameters:
+            - type: object
+              mapping: "$."
+
+        - name: update-record
+          description: "Update fields on an existing Salesforce CRM record"
+          hints:
+            readOnly: false
+            idempotent: true
+          call: "salesforce-rest.update-record"
+          with:
+            sObjectName: "tools.sObjectName"
+            id: "tools.id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+
+        - name: delete-record
+          description: "Delete a Salesforce CRM record (moves to recycle bin, recoverable)"
+          hints:
+            readOnly: false
+            destructive: true
+            idempotent: true
+          call: "salesforce-rest.delete-record"
+          with:
+            sObjectName: "tools.sObjectName"
+            id: "tools.id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+
+        - name: get-field-metadata
+          description: "Get field definitions and schema metadata for a Salesforce object type"
+          hints:
+            readOnly: true
+            idempotent: true
+          call: "salesforce-rest.describe-sobject"
+          with:
+            sObjectName: "tools.sObjectName"
+          outputParameters:
+            - type: object
+              mapping: "$."
+
+        - name: check-api-limits
+          description: "Check current Salesforce org API call limits and remaining usage"
+          hints:
+            readOnly: true
+            idempotent: true
+          call: "salesforce-rest.get-org-limits"
+          outputParameters:
+            - type: object
+              mapping: "$."

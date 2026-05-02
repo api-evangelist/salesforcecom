@@ -1,0 +1,725 @@
+openapi: 3.0.0
+info:
+  title: Salesforce REST API
+  description: >-
+    The Salesforce REST API provides programmatic access to Salesforce org data,
+    enabling create, read, update, and delete (CRUD) operations on standard and
+    custom objects, SOQL query execution, metadata retrieval, and org configuration.
+    Supports OAuth 2.0 authentication and returns JSON or XML responses.
+  version: 60.0
+  contact:
+    name: Salesforce Developer
+    url: https://developer.salesforce.com
+  license:
+    name: Salesforce Developer Agreement
+    url: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest
+servers:
+  - url: https://{instance}.salesforce.com
+    description: Salesforce org instance
+    variables:
+      instance:
+        default: na1
+        description: Salesforce instance subdomain (e.g. na1, eu6, ap1)
+tags:
+  - name: Records
+    description: CRUD operations on Salesforce sObject records
+  - name: Query
+    description: SOQL query execution
+  - name: Search
+    description: SOSL search execution
+  - name: Metadata
+    description: sObject metadata and describe operations
+  - name: Composite
+    description: Composite API for batching multiple operations
+  - name: Versions
+    description: API version information
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token obtained via Salesforce Connected App
+  schemas:
+    sObject:
+      type: object
+      description: A Salesforce standard or custom object record
+      properties:
+        Id:
+          type: string
+          description: Unique 18-character Salesforce record ID
+        attributes:
+          type: object
+          properties:
+            type:
+              type: string
+              description: sObject API name (e.g., Account, Contact)
+            url:
+              type: string
+              description: REST API URL for this record
+        Name:
+          type: string
+          description: Primary name field of the record
+        CreatedDate:
+          type: string
+          format: date-time
+          description: Timestamp when the record was created
+        LastModifiedDate:
+          type: string
+          format: date-time
+          description: Timestamp when the record was last modified
+        OwnerId:
+          type: string
+          description: ID of the user or queue who owns the record
+        IsDeleted:
+          type: boolean
+          description: Whether the record is in the recycle bin
+      additionalProperties: true
+    QueryResult:
+      type: object
+      description: SOQL query result envelope
+      properties:
+        totalSize:
+          type: integer
+          description: Total number of records matching the query
+        done:
+          type: boolean
+          description: Whether all results have been returned
+        nextRecordsUrl:
+          type: string
+          description: URL to retrieve the next page when done is false
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/sObject'
+      required:
+        - totalSize
+        - done
+        - records
+    SObjectDescribe:
+      type: object
+      description: Metadata description of a Salesforce sObject type
+      properties:
+        name:
+          type: string
+          description: API name of the sObject (e.g., Account)
+        label:
+          type: string
+          description: User-facing label
+        labelPlural:
+          type: string
+          description: Plural user-facing label
+        keyPrefix:
+          type: string
+          description: 3-character prefix of the record ID
+        fields:
+          type: array
+          items:
+            type: object
+          description: Field metadata list
+        urls:
+          type: object
+          description: REST endpoint URLs for this sObject
+        createable:
+          type: boolean
+        updateable:
+          type: boolean
+        deleteable:
+          type: boolean
+        queryable:
+          type: boolean
+    ErrorResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          message:
+            type: string
+            description: Error message
+          errorCode:
+            type: string
+            description: Salesforce error code (e.g., ENTITY_IS_DELETED)
+          fields:
+            type: array
+            items:
+              type: string
+            description: Fields that caused the error
+paths:
+  /services/data:
+    get:
+      tags:
+        - Versions
+      summary: List Available API Versions
+      description: >-
+        Returns a list of available Salesforce REST API versions. Use this to
+        determine which API version to use for subsequent requests.
+      operationId: listApiVersions
+      security: []
+      responses:
+        '200':
+          description: List of available API versions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    version:
+                      type: string
+                      description: API version string (e.g., "60.0")
+                    label:
+                      type: string
+                      description: Version label
+                    url:
+                      type: string
+                      description: Base URL for this version
+
+  /services/data/v{version}/sobjects:
+    get:
+      tags:
+        - Metadata
+      summary: List All sObjects
+      description: >-
+        Returns a list of all sObjects available in the Salesforce org, including
+        metadata counts and timestamps for the most recently modified objects.
+      operationId: listSObjects
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version (e.g., 60.0)
+          schema:
+            type: string
+            default: "60.0"
+      responses:
+        '200':
+          description: List of all sObjects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  encoding:
+                    type: string
+                  maxBatchSize:
+                    type: integer
+                  sobjects:
+                    type: array
+                    items:
+                      type: object
+        '401':
+          description: Unauthorized - invalid or expired access token
+
+  /services/data/v{version}/sobjects/{sObjectName}:
+    get:
+      tags:
+        - Metadata
+      summary: Get sObject Metadata
+      description: >-
+        Returns metadata for the specified sObject type, including field definitions,
+        relationships, limits, and API URLs.
+      operationId: getSObjectMetadata
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+        - name: sObjectName
+          in: path
+          required: true
+          description: API name of the sObject (e.g., Account, Contact, Opportunity)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: sObject metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SObjectDescribe'
+        '404':
+          description: sObject not found
+
+  /services/data/v{version}/sobjects/{sObjectName}/describe:
+    get:
+      tags:
+        - Metadata
+      summary: Describe sObject Fields
+      description: >-
+        Returns the full field-level describe result for the specified sObject type,
+        including all field metadata, picklist values, relationships, and child objects.
+      operationId: describeSObject
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+        - name: sObjectName
+          in: path
+          required: true
+          description: API name of the sObject (e.g., Account, Contact)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Full sObject describe result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SObjectDescribe'
+
+  /services/data/v{version}/sobjects/{sObjectName}/{id}:
+    get:
+      tags:
+        - Records
+      summary: Get sObject Record
+      description: >-
+        Retrieves a specific sObject record by its Salesforce ID. You can retrieve
+        all fields or specify a comma-separated list of fields to return.
+      operationId: getSObjectRecord
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+        - name: sObjectName
+          in: path
+          required: true
+          description: API name of the sObject (e.g., Account, Contact)
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: 18-character Salesforce record ID
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          description: Comma-separated list of fields to return
+          schema:
+            type: string
+      responses:
+        '200':
+          description: sObject record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sObject'
+        '404':
+          description: Record not found
+        '401':
+          description: Unauthorized
+    patch:
+      tags:
+        - Records
+      summary: Update sObject Record
+      description: >-
+        Updates one or more fields of the specified sObject record. You only need
+        to include fields you want to update in the request body.
+      operationId: updateSObjectRecord
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+        - name: sObjectName
+          in: path
+          required: true
+          description: API name of the sObject (e.g., Account, Contact)
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: 18-character Salesforce record ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              description: Fields to update on the record
+      responses:
+        '204':
+          description: Record updated successfully (no body)
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Record not found
+    delete:
+      tags:
+        - Records
+      summary: Delete sObject Record
+      description: >-
+        Deletes the specified sObject record. Deleted records are moved to the
+        Salesforce recycle bin and can be undeleted within 15 days.
+      operationId: deleteSObjectRecord
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+        - name: sObjectName
+          in: path
+          required: true
+          description: API name of the sObject (e.g., Account, Contact)
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: 18-character Salesforce record ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Record deleted successfully
+        '404':
+          description: Record not found
+
+  /services/data/v{version}/sobjects/{sObjectName}:
+    post:
+      tags:
+        - Records
+      summary: Create sObject Record
+      description: >-
+        Creates a new sObject record of the specified type. Returns the ID and
+        success status of the created record.
+      operationId: createSObjectRecord
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+        - name: sObjectName
+          in: path
+          required: true
+          description: API name of the sObject (e.g., Account, Contact)
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              description: Fields for the new record
+      responses:
+        '201':
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID of the created record
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /services/data/v{version}/query:
+    get:
+      tags:
+        - Query
+      summary: Execute SOQL Query
+      description: >-
+        Executes a SOQL (Salesforce Object Query Language) query and returns the
+        matching records. Use nextRecordsUrl for pagination when done is false.
+      operationId: executeQuery
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+        - name: q
+          in: query
+          required: true
+          description: SOQL query string (e.g., SELECT Id, Name FROM Account LIMIT 200)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: SOQL query result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+        '400':
+          description: Invalid SOQL query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /services/data/v{version}/queryAll:
+    get:
+      tags:
+        - Query
+      summary: Execute SOQL Query Including Deleted Records
+      description: >-
+        Executes a SOQL query and returns all matching records including those
+        that have been soft-deleted (in the recycle bin). Equivalent to using
+        the ALL ROWS clause in SOQL.
+      operationId: executeQueryAll
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+        - name: q
+          in: query
+          required: true
+          description: SOQL query string
+          schema:
+            type: string
+      responses:
+        '200':
+          description: SOQL query result including deleted records
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+
+  /services/data/v{version}/search:
+    get:
+      tags:
+        - Search
+      summary: Execute SOSL Search
+      description: >-
+        Executes a SOSL (Salesforce Object Search Language) search across multiple
+        sObject types simultaneously. Returns matching records from all specified
+        objects in a single call.
+      operationId: executeSearch
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+        - name: q
+          in: query
+          required: true
+          description: >-
+            SOSL search string (e.g., FIND {Joe Smith} IN ALL FIELDS RETURNING Account, Contact)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: SOSL search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  searchRecords:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/sObject'
+
+  /services/data/v{version}/limits:
+    get:
+      tags:
+        - Metadata
+      summary: Get Org Limits
+      description: >-
+        Returns the limits for your Salesforce org, including current usage and
+        maximum allowed values for API calls, data storage, file storage, and more.
+      operationId: getOrgLimits
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+      responses:
+        '200':
+          description: Org limits
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    Max:
+                      type: integer
+                    Remaining:
+                      type: integer
+
+  /services/data/v{version}/composite/batch:
+    post:
+      tags:
+        - Composite
+      summary: Execute Composite Batch
+      description: >-
+        Executes up to 25 subrequests in a single API call. Each subrequest can
+        be a SOQL query, CRUD operation, or metadata retrieval. Failed subrequests
+        do not prevent others from executing (unlike Composite).
+      operationId: compositeBatch
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                batchRequests:
+                  type: array
+                  maxItems: 25
+                  items:
+                    type: object
+                    properties:
+                      method:
+                        type: string
+                        enum: [GET, POST, PATCH, DELETE]
+                      url:
+                        type: string
+                        description: Relative URL for this subrequest
+                      richInput:
+                        type: object
+                        description: Request body for POST/PATCH subrequests
+                haltOnError:
+                  type: boolean
+                  description: Stop processing on first error
+      responses:
+        '200':
+          description: Batch results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hasErrors:
+                    type: boolean
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        statusCode:
+                          type: integer
+                        result:
+                          type: object
+
+  /services/data/v{version}/composite:
+    post:
+      tags:
+        - Composite
+      summary: Execute Composite Request
+      description: >-
+        Executes a series of REST API requests in a single call. Allows you to
+        use the output of one subrequest as the input for subsequent subrequests
+        using reference IDs. Supports up to 25 subrequests.
+      operationId: compositeRequest
+      parameters:
+        - name: version
+          in: path
+          required: true
+          description: Salesforce API version
+          schema:
+            type: string
+            default: "60.0"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                allOrNone:
+                  type: boolean
+                  description: Roll back all subrequests if any fail
+                compositeRequest:
+                  type: array
+                  maxItems: 25
+                  items:
+                    type: object
+                    properties:
+                      method:
+                        type: string
+                        enum: [GET, POST, PATCH, DELETE]
+                      url:
+                        type: string
+                      referenceId:
+                        type: string
+                        description: ID for referencing this result in later subrequests
+                      body:
+                        type: object
+      responses:
+        '200':
+          description: Composite results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  compositeResponse:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        body:
+                          type: object
+                        httpStatusCode:
+                          type: integer
+                        referenceId:
+                          type: string

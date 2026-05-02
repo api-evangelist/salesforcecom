@@ -1,0 +1,51 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://na1.salesforce.com/services/data/v60.0/query",
+    "headers": {
+      "Authorization": "Bearer 00D...",
+      "Accept": "application/json"
+    },
+    "queryParameters": {
+      "q": "SELECT Id, Name, Industry, AnnualRevenue, BillingCity, BillingState, OwnerId FROM Account WHERE Industry = 'Technology' LIMIT 10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json; charset=UTF-8"
+    },
+    "body": {
+      "totalSize": 2,
+      "done": true,
+      "records": [
+        {
+          "attributes": {
+            "type": "Account",
+            "url": "/services/data/v60.0/sobjects/Account/001Dn000003GKkJIAW"
+          },
+          "Id": "001Dn000003GKkJIAW",
+          "Name": "Acme Technologies",
+          "Industry": "Technology",
+          "AnnualRevenue": 5000000,
+          "BillingCity": "San Francisco",
+          "BillingState": "CA",
+          "OwnerId": "005Dn000001T2HAIA0"
+        },
+        {
+          "attributes": {
+            "type": "Account",
+            "url": "/services/data/v60.0/sobjects/Account/001Dn000003GKkKIAW"
+          },
+          "Id": "001Dn000003GKkKIAW",
+          "Name": "BetaCorp Solutions",
+          "Industry": "Technology",
+          "AnnualRevenue": 12000000,
+          "BillingCity": "Austin",
+          "BillingState": "TX",
+          "OwnerId": "005Dn000001T2HAIA0"
+        }
+      ]
+    }
+  }
+}

@@ -24,9 +24,20 @@ Salesforce is a global leader in customer relationship management (CRM) software
 - **Postman Collection**: [Salesforce Platform APIs](https://www.postman.com/salesforce-developers/salesforce-developers)
 - **GitHub Org (forcedotcom)**: [github.com/forcedotcom](https://github.com/forcedotcom)
 - **GitHub Org (salesforcecli)**: [github.com/salesforcecli](https://github.com/salesforcecli)
+- **CLI**: [Salesforce CLI](https://github.com/salesforcecli/cli)
 - **Status**: [status.salesforce.com](https://status.salesforce.com)
 
 ## Artifacts
+
+### OpenAPI Specs
+- [salesforcecom-rest-openapi.yml](openapi/salesforcecom-rest-openapi.yml) — Salesforce REST API (14 operations: CRUD, SOQL, SOSL, Composite)
+
+### Spectral Rules
+- [salesforcecom-rules.yml](rules/salesforcecom-rules.yml) — API style and compliance rules
+
+### Capabilities
+- [crm-data-management.yaml](capabilities/crm-data-management.yaml) — CRM record CRUD + SOQL query + SOSL search workflow
+- [shared/salesforce-rest.yaml](capabilities/shared/salesforce-rest.yaml) — Base Salesforce REST API consumed definition
 
 ### JSON Schema
 - [salesforcecom-sobject-schema.json](json-schema/salesforcecom-sobject-schema.json) — Salesforce sObject record schema
@@ -37,6 +48,10 @@ Salesforce is a global leader in customer relationship management (CRM) software
 
 ### JSON-LD
 - [salesforcecom-context.jsonld](json-ld/salesforcecom-context.jsonld) — Linked data context for CRM objects
+
+### Examples
+- [salesforcecom-query-accounts-example.json](examples/salesforcecom-query-accounts-example.json) — SOQL query for Technology accounts
+- [salesforcecom-create-contact-example.json](examples/salesforcecom-create-contact-example.json) — Create contact request/response
 
 ### Vocabulary
 - [salesforcecom-vocabulary.yml](vocabulary/salesforcecom-vocabulary.yml) — Salesforce platform terminology
