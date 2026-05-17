@@ -196,11 +196,11 @@ common:
     url: https://trailblazer.salesforce.com
   - type: Pricing
     url: https://www.salesforce.com/editions-pricing/
-  - type: Status
+  - type: StatusPage
     url: https://status.salesforce.com
   - type: Support
     url: https://help.salesforce.com
-  - type: Signup
+  - type: SignUp
     url: https://www.salesforce.com/form/signup/freetrial-salesforce/
   - type: LinkedIn
     url: https://www.linkedin.com/company/salesforce
