@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/ErrorResponse",
+  "title": "ErrorResponse",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string",
+        "description": "Error message"
+      },
+      "errorCode": {
+        "type": "string",
+        "description": "Salesforce error code (e.g., ENTITY_IS_DELETED)"
+      },
+      "fields": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Fields that caused the error"
+      }
+    }
+  }
+}

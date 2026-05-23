@@ -1,0 +1,157 @@
+{
+  "provider": "Salesforce",
+  "providerId": "salesforcecom",
+  "kind": "json-structure",
+  "description": "Structural overview of the Salesforce API surface; extracted from openapi/.",
+  "schemaCount": 4,
+  "operationCount": 13,
+  "schemas": [
+    {
+      "name": "sObject",
+      "type": "object",
+      "propertyCount": 7,
+      "required": []
+    },
+    {
+      "name": "QueryResult",
+      "type": "object",
+      "propertyCount": 4,
+      "required": [
+        "totalSize",
+        "done",
+        "records"
+      ]
+    },
+    {
+      "name": "SObjectDescribe",
+      "type": "object",
+      "propertyCount": 10,
+      "required": []
+    },
+    {
+      "name": "ErrorResponse",
+      "type": "array",
+      "propertyCount": 0,
+      "required": []
+    }
+  ],
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/services/data",
+      "operationId": "listApiVersions",
+      "summary": "List Available API Versions",
+      "tags": [
+        "Versions"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/services/data/v{version}/sobjects",
+      "operationId": "listSObjects",
+      "summary": "List All sObjects",
+      "tags": [
+        "Metadata"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/services/data/v{version}/sobjects/{sObjectName}",
+      "operationId": "createSObjectRecord",
+      "summary": "Create sObject Record",
+      "tags": [
+        "Records"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/services/data/v{version}/sobjects/{sObjectName}/describe",
+      "operationId": "describeSObject",
+      "summary": "Describe sObject Fields",
+      "tags": [
+        "Metadata"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/services/data/v{version}/sobjects/{sObjectName}/{id}",
+      "operationId": "getSObjectRecord",
+      "summary": "Get sObject Record",
+      "tags": [
+        "Records"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/services/data/v{version}/sobjects/{sObjectName}/{id}",
+      "operationId": "deleteSObjectRecord",
+      "summary": "Delete sObject Record",
+      "tags": [
+        "Records"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/services/data/v{version}/sobjects/{sObjectName}/{id}",
+      "operationId": "updateSObjectRecord",
+      "summary": "Update sObject Record",
+      "tags": [
+        "Records"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/services/data/v{version}/query",
+      "operationId": "executeQuery",
+      "summary": "Execute SOQL Query",
+      "tags": [
+        "Query"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/services/data/v{version}/queryAll",
+      "operationId": "executeQueryAll",
+      "summary": "Execute SOQL Query Including Deleted Records",
+      "tags": [
+        "Query"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/services/data/v{version}/search",
+      "operationId": "executeSearch",
+      "summary": "Execute SOSL Search",
+      "tags": [
+        "Search"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/services/data/v{version}/limits",
+      "operationId": "getOrgLimits",
+      "summary": "Get Org Limits",
+      "tags": [
+        "Metadata"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/services/data/v{version}/composite/batch",
+      "operationId": "compositeBatch",
+      "summary": "Execute Composite Batch",
+      "tags": [
+        "Composite"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/services/data/v{version}/composite",
+      "operationId": "compositeRequest",
+      "summary": "Execute Composite Request",
+      "tags": [
+        "Composite"
+      ]
+    }
+  ]
+}

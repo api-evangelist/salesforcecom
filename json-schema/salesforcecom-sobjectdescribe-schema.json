@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "#/components/schemas/SObjectDescribe",
+  "title": "SObjectDescribe",
+  "type": "object",
+  "description": "Metadata description of a Salesforce sObject type",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "API name of the sObject (e.g., Account)"
+    },
+    "label": {
+      "type": "string",
+      "description": "User-facing label"
+    },
+    "labelPlural": {
+      "type": "string",
+      "description": "Plural user-facing label"
+    },
+    "keyPrefix": {
+      "type": "string",
+      "description": "3-character prefix of the record ID"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Field metadata list"
+    },
+    "urls": {
+      "type": "object",
+      "description": "REST endpoint URLs for this sObject"
+    },
+    "createable": {
+      "type": "boolean"
+    },
+    "updateable": {
+      "type": "boolean"
+    },
+    "deleteable": {
+      "type": "boolean"
+    },
+    "queryable": {
+      "type": "boolean"
+    }
+  }
+}
