@@ -1,61 +1,205 @@
-# Salesforce
+# Salesforce (salesforcecom)
 
 Salesforce is a global leader in customer relationship management (CRM) software and cloud-based applications. The Salesforce Platform provides a comprehensive suite of APIs for sales, service, marketing, commerce, integration, analytics, and platform development including Agentforce AI capabilities.
 
+**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/salesforcecom/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/salesforcecom/refs/heads/main/apis.yml)
+
+## Scope
+
+- **Type:** Index
+- **Access:** 3rd-Party
+
+## Tags
+
+- CRM
+- Cloud
+- Sales
+- Marketing
+- Automation
+- AI
+
+## Timestamps
+
+- **Created:** 2026-03-24
+- **Modified:** 2026-05-19
+
 ## APIs
 
-| API | Description |
-|---|---|
-| [Salesforce REST API](https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest) | Core REST API for CRUD operations on Salesforce records via SOQL |
-| [Salesforce Bulk API 2.0](https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch) | Async bulk data loading for large record sets |
-| [Salesforce Streaming API](https://developer.salesforce.com/docs/atlas.en-us.api_streaming.meta/api_streaming) | Real-time event streaming via PushTopic, CDC, and Platform Events |
-| [Salesforce Metadata API](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta) | Org customization deployment and retrieval for CI/CD |
-| [Salesforce Connect REST API](https://developer.salesforce.com/docs/atlas.en-us.chatterapi.meta/chatterapi) | Chatter, Files, and Experience Cloud features |
-| [Marketing Cloud REST API](https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/rest-api.html) | Email, SMS, journeys, and subscriber management |
-| [Salesforce B2C Commerce API](https://developer.salesforce.com/docs/commerce/b2c-commerce/guide/b2c-commerce-api.html) | Headless commerce storefront API |
-| [Agentforce API](https://developer.salesforce.com/agentforce) | Build and deploy autonomous AI agents |
-| [MuleSoft Anypoint Platform API](https://docs.mulesoft.com/mule-runtime/latest/) | Integration and API management |
+### Salesforce REST API
 
-## Resources
+The Salesforce REST API provides programmatic access to your Salesforce org data, letting you create, read, update, and delete records, execute queries, and manage org metadata. Supports OAuth 2.0 authentication and returns JSON or XML responses.
 
-- **Developer Portal**: [developer.salesforce.com](https://developer.salesforce.com)
-- **API Library**: [developer.salesforce.com/docs/apis](https://developer.salesforce.com/docs/apis)
-- **Trailhead**: [trailhead.salesforce.com](https://trailhead.salesforce.com)
-- **Postman Collection**: [Salesforce Platform APIs](https://www.postman.com/salesforce-developers/salesforce-developers)
-- **GitHub Org (forcedotcom)**: [github.com/forcedotcom](https://github.com/forcedotcom)
-- **GitHub Org (salesforcecli)**: [github.com/salesforcecli](https://github.com/salesforcecli)
-- **CLI**: [Salesforce CLI](https://github.com/salesforcecli/cli)
-- **Status**: [status.salesforce.com](https://status.salesforce.com)
+- **Human URL:** [https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest](https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest)
 
-## Artifacts
+#### Tags
 
-### OpenAPI Specs
-- [salesforcecom-rest-openapi.yml](openapi/salesforcecom-rest-openapi.yml) — Salesforce REST API (14 operations: CRUD, SOQL, SOSL, Composite)
+- CRM
+- Data
+- Records
+- Query
 
-### Spectral Rules
-- [salesforcecom-rules.yml](rules/salesforcecom-rules.yml) — API style and compliance rules
+#### Properties
 
-### Capabilities
-- [crm-data-management.yaml](capabilities/crm-data-management.yaml) — CRM record CRUD + SOQL query + SOSL search workflow
-- [shared/salesforce-rest.yaml](capabilities/shared/salesforce-rest.yaml) — Base Salesforce REST API consumed definition
+- [Documentation](https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest)
+- [Versioning](https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_versions.htm)
+- [OpenAPI](openapi/salesforcecom-rest-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
+- [Summary](undefined)
 
-### JSON Schema
-- [salesforcecom-sobject-schema.json](json-schema/salesforcecom-sobject-schema.json) — Salesforce sObject record schema
-- [salesforcecom-query-result-schema.json](json-schema/salesforcecom-query-result-schema.json) — SOQL query result schema
+### Salesforce Bulk API 2.0
 
-### JSON Structure
-- [salesforcecom-sobject-structure.json](json-structure/salesforcecom-sobject-structure.json) — sObject structure documentation
+The Salesforce Bulk API 2.0 is a specialized REST API for loading large numbers of records asynchronously. It is optimized for processing jobs that contain large data sets, supporting insert, update, upsert, delete, and query operations.
 
-### JSON-LD
-- [salesforcecom-context.jsonld](json-ld/salesforcecom-context.jsonld) — Linked data context for CRM objects
+- **Human URL:** [https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch](https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch)
 
-### Examples
-- [salesforcecom-query-accounts-example.json](examples/salesforcecom-query-accounts-example.json) — SOQL query for Technology accounts
-- [salesforcecom-create-contact-example.json](examples/salesforcecom-create-contact-example.json) — Create contact request/response
+#### Tags
 
-### Vocabulary
-- [salesforcecom-vocabulary.yml](vocabulary/salesforcecom-vocabulary.yml) — Salesforce platform terminology
+- Bulk Data
+- ETL
+- Async
 
-## Maintained By
+#### Properties
 
-[Kin Lane](mailto:kin@apievangelist.com) — [API Evangelist](https://apievangelist.com)
+- [Documentation](https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch)
+
+### Salesforce Streaming API
+
+The Salesforce Streaming API lets you subscribe to changes in Salesforce data using push technology based on the Bayeux protocol. It enables real-time notifications via PushTopic events, Change Data Capture, Platform Events, and Generic Events.
+
+- **Human URL:** [https://developer.salesforce.com/docs/atlas.en-us.api_streaming.meta/api_streaming](https://developer.salesforce.com/docs/atlas.en-us.api_streaming.meta/api_streaming)
+
+#### Tags
+
+- Streaming
+- Events
+- Real-Time
+
+#### Properties
+
+- [Documentation](https://developer.salesforce.com/docs/atlas.en-us.api_streaming.meta/api_streaming)
+
+### Salesforce Metadata API
+
+The Salesforce Metadata API enables you to retrieve, deploy, create, update, and delete customization information such as custom object definitions and page layouts for your organization. Used primarily by developer tools and CI/CD pipelines.
+
+- **Human URL:** [https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta)
+
+#### Tags
+
+- Metadata
+- DevOps
+- Configuration
+
+#### Properties
+
+- [Documentation](https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta)
+
+### Salesforce Connect REST API
+
+Salesforce Connect REST API provides access to Salesforce Experience Cloud, Files, Chatter, and community features. Enables social features, file management, user feeds, and collaboration across Salesforce orgs.
+
+- **Human URL:** [https://developer.salesforce.com/docs/atlas.en-us.chatterapi.meta/chatterapi](https://developer.salesforce.com/docs/atlas.en-us.chatterapi.meta/chatterapi)
+
+#### Tags
+
+- Connect
+- Chatter
+- Community
+- Files
+
+#### Properties
+
+- [Documentation](https://developer.salesforce.com/docs/atlas.en-us.chatterapi.meta/chatterapi)
+
+### Salesforce Marketing Cloud REST API
+
+The Marketing Cloud REST API provides access to Marketing Cloud data and functionality including email, SMS, push messaging, contact management, journeys, and data extensions. Enables programmatic management of marketing campaigns and subscriber data.
+
+- **Human URL:** [https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/rest-api.html](https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/rest-api.html)
+
+#### Tags
+
+- Marketing
+- Email
+- SMS
+- Campaigns
+
+#### Properties
+
+- [Documentation](https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/rest-api.html)
+
+### Salesforce B2C Commerce API
+
+The Salesforce B2C Commerce API (SCAPI) provides RESTful access to commerce storefront functionality including products, catalogs, pricing, inventory, orders, customers, and baskets. Enables headless commerce implementations.
+
+- **Human URL:** [https://developer.salesforce.com/docs/commerce/b2c-commerce/guide/b2c-commerce-api.html](https://developer.salesforce.com/docs/commerce/b2c-commerce/guide/b2c-commerce-api.html)
+
+#### Tags
+
+- Commerce
+- Ecommerce
+- Storefront
+- B2C
+
+#### Properties
+
+- [Documentation](https://developer.salesforce.com/docs/commerce/b2c-commerce/guide/b2c-commerce-api.html)
+
+### Salesforce Agentforce API
+
+The Salesforce Agentforce API enables developers to build, deploy, and manage AI agents that can autonomously complete tasks across the Salesforce platform. Supports agent creation, customization, and integration with the Agentforce 360 Platform.
+
+- **Human URL:** [https://developer.salesforce.com/agentforce](https://developer.salesforce.com/agentforce)
+
+#### Tags
+
+- AI
+- Agents
+- Automation
+- Agentforce
+
+#### Properties
+
+- [Documentation](https://developer.salesforce.com/agentforce)
+
+### Salesforce MuleSoft Anypoint Platform API
+
+The MuleSoft Anypoint Platform API enables programmatic management of APIs, integrations, and integration assets. Supports API lifecycle management, deployment, analytics, and policy enforcement across the MuleSoft integration platform.
+
+- **Human URL:** [https://docs.mulesoft.com/mule-runtime/latest/](https://docs.mulesoft.com/mule-runtime/latest/)
+
+#### Tags
+
+- Integration
+- MuleSoft
+- API Management
+- iPaaS
+
+#### Properties
+
+- [Documentation](https://docs.mulesoft.com/mule-runtime/latest/)
+
+## Common Properties
+
+- [Website](https://www.salesforce.com)
+- [Portal](https://developer.salesforce.com)
+- [Documentation](https://developer.salesforce.com/docs)
+- [A P I Library](https://developer.salesforce.com/docs/apis)
+- [Blog](https://developer.salesforce.com/blogs)
+- [Community](https://trailblazer.salesforce.com)
+- [Pricing](https://www.salesforce.com/editions-pricing/)
+- [Status Page](https://status.salesforce.com)
+- [Support](https://help.salesforce.com)
+- [Sign Up](https://www.salesforce.com/form/signup/freetrial-salesforce/)
+- [LinkedIn](https://www.linkedin.com/company/salesforce)
+- [Twitter](https://twitter.com/salesforce)
+- [GitHub Organization](https://github.com/forcedotcom)
+- [GitHub Organization](https://github.com/salesforcecli)
+- [C L I](https://github.com/salesforcecli/cli)
+- [Postman Workspace](https://www.postman.com/salesforce-developers/salesforce-developers)
+- [Changelog](https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/api_rest_whats_new.htm)
+- [Trailhead](https://trailhead.salesforce.com)
+
+## Maintainers
+
+**FN:** Kin Lane
+**Email:** kin@apievangelist.com
