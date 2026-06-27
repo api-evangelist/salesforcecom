@@ -182,7 +182,7 @@ common:
     url: https://status.salesforce.com
   - type: Support
     url: https://help.salesforce.com
-  - type: SignUp
+  - type: Signup
     url: https://www.salesforce.com/form/signup/freetrial-salesforce/
   - type: LinkedIn
     url: https://www.linkedin.com/company/salesforce
