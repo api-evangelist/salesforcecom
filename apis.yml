@@ -164,6 +164,12 @@ apis:
       - type: Documentation
         url: https://docs.mulesoft.com/mule-runtime/latest/
 common:
+  - type: VulnerabilityDisclosure
+    url: security/salesforcecom-vulnerability-disclosure.yml
+  - type: DomainSecurity
+    url: security/salesforcecom-domain-security.yml
+  - type: Authentication
+    url: authentication/salesforcecom-authentication.yml
   - type: Website
     url: https://www.salesforce.com
   - type: Portal
