@@ -2,13 +2,11 @@
   "repo": "salesforcecom",
   "feeds": [
     {
-      "source": "https://developer.salesforce.com/blogs",
-      "feed_url": "",
-      "saved": 0,
-      "method": "agent-scrape"
+      "source": "https://developer.salesforce.com/docs/apis",
+      "error": "HTTPError"
     }
   ],
   "post_count": 14,
-  "fetched": "2026-06-27T13:07:46Z",
+  "fetched": "2026-07-11T11:50:51Z",
   "agent_pulled": "2026-06-27"
 }
