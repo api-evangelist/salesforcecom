@@ -164,6 +164,8 @@ apis:
       - type: Documentation
         url: https://docs.mulesoft.com/mule-runtime/latest/
 common:
+  - type: AgenticAccess
+    url: agentic-access/salesforcecom-agentic-access.yml
   - type: VulnerabilityDisclosure
     url: security/salesforcecom-vulnerability-disclosure.yml
   - type: DomainSecurity
