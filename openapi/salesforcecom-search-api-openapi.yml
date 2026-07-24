@@ -1,0 +1,98 @@
+openapi: 3.0.0
+info:
+  title: Salesforce REST Composite Search API
+  description: The Salesforce REST API provides programmatic access to Salesforce org data, enabling create, read, update, and delete (CRUD) operations on standard and custom objects, SOQL query execution, metadata retrieval, and org configuration. Supports OAuth 2.0 authentication and returns JSON or XML responses.
+  version: 60.0
+  contact:
+    name: Salesforce Developer
+    url: https://developer.salesforce.com
+  license:
+    name: Salesforce Developer Agreement
+    url: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest
+servers:
+- url: https://{instance}.salesforce.com
+  description: Salesforce org instance
+  variables:
+    instance:
+      default: na1
+      description: Salesforce instance subdomain (e.g. na1, eu6, ap1)
+security:
+- bearerAuth: []
+tags:
+- name: Search
+  description: SOSL search execution
+paths:
+  /services/data/v{version}/search:
+    get:
+      tags:
+      - Search
+      summary: Execute SOSL Search
+      description: Executes a SOSL (Salesforce Object Search Language) search across multiple sObject types simultaneously. Returns matching records from all specified objects in a single call.
+      operationId: executeSearch
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version
+        schema:
+          type: string
+          default: '60.0'
+      - name: q
+        in: query
+        required: true
+        description: SOSL search string (e.g., FIND {Joe Smith} IN ALL FIELDS RETURNING Account, Contact)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: SOSL search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  searchRecords:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/sObject'
+components:
+  schemas:
+    sObject:
+      type: object
+      description: A Salesforce standard or custom object record
+      properties:
+        Id:
+          type: string
+          description: Unique 18-character Salesforce record ID
+        attributes:
+          type: object
+          properties:
+            type:
+              type: string
+              description: sObject API name (e.g., Account, Contact)
+            url:
+              type: string
+              description: REST API URL for this record
+        Name:
+          type: string
+          description: Primary name field of the record
+        CreatedDate:
+          type: string
+          format: date-time
+          description: Timestamp when the record was created
+        LastModifiedDate:
+          type: string
+          format: date-time
+          description: Timestamp when the record was last modified
+        OwnerId:
+          type: string
+          description: ID of the user or queue who owns the record
+        IsDeleted:
+          type: boolean
+          description: Whether the record is in the recycle bin
+      additionalProperties: true
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token obtained via Salesforce Connected App

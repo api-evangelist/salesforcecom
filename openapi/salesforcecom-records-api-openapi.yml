@@ -1,0 +1,253 @@
+openapi: 3.0.0
+info:
+  title: Salesforce REST Composite Records API
+  description: The Salesforce REST API provides programmatic access to Salesforce org data, enabling create, read, update, and delete (CRUD) operations on standard and custom objects, SOQL query execution, metadata retrieval, and org configuration. Supports OAuth 2.0 authentication and returns JSON or XML responses.
+  version: 60.0
+  contact:
+    name: Salesforce Developer
+    url: https://developer.salesforce.com
+  license:
+    name: Salesforce Developer Agreement
+    url: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest
+servers:
+- url: https://{instance}.salesforce.com
+  description: Salesforce org instance
+  variables:
+    instance:
+      default: na1
+      description: Salesforce instance subdomain (e.g. na1, eu6, ap1)
+security:
+- bearerAuth: []
+tags:
+- name: Records
+  description: CRUD operations on Salesforce sObject records
+paths:
+  /services/data/v{version}/sobjects/{sObjectName}:
+    post:
+      tags:
+      - Records
+      summary: Create sObject Record
+      description: Creates a new sObject record of the specified type. Returns the ID and success status of the created record.
+      operationId: createSObjectRecord
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version
+        schema:
+          type: string
+          default: '60.0'
+      - name: sObjectName
+        in: path
+        required: true
+        description: API name of the sObject (e.g., Account, Contact)
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              description: Fields for the new record
+      responses:
+        '201':
+          description: Record created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: ID of the created record
+                  success:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /services/data/v{version}/sobjects/{sObjectName}/{id}:
+    get:
+      tags:
+      - Records
+      summary: Get sObject Record
+      description: Retrieves a specific sObject record by its Salesforce ID. You can retrieve all fields or specify a comma-separated list of fields to return.
+      operationId: getSObjectRecord
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version
+        schema:
+          type: string
+          default: '60.0'
+      - name: sObjectName
+        in: path
+        required: true
+        description: API name of the sObject (e.g., Account, Contact)
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: 18-character Salesforce record ID
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to return
+        schema:
+          type: string
+      responses:
+        '200':
+          description: sObject record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/sObject'
+        '404':
+          description: Record not found
+        '401':
+          description: Unauthorized
+    patch:
+      tags:
+      - Records
+      summary: Update sObject Record
+      description: Updates one or more fields of the specified sObject record. You only need to include fields you want to update in the request body.
+      operationId: updateSObjectRecord
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version
+        schema:
+          type: string
+          default: '60.0'
+      - name: sObjectName
+        in: path
+        required: true
+        description: API name of the sObject (e.g., Account, Contact)
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: 18-character Salesforce record ID
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              description: Fields to update on the record
+      responses:
+        '204':
+          description: Record updated successfully (no body)
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Record not found
+    delete:
+      tags:
+      - Records
+      summary: Delete sObject Record
+      description: Deletes the specified sObject record. Deleted records are moved to the Salesforce recycle bin and can be undeleted within 15 days.
+      operationId: deleteSObjectRecord
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version
+        schema:
+          type: string
+          default: '60.0'
+      - name: sObjectName
+        in: path
+        required: true
+        description: API name of the sObject (e.g., Account, Contact)
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: 18-character Salesforce record ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted successfully
+        '404':
+          description: Record not found
+components:
+  schemas:
+    sObject:
+      type: object
+      description: A Salesforce standard or custom object record
+      properties:
+        Id:
+          type: string
+          description: Unique 18-character Salesforce record ID
+        attributes:
+          type: object
+          properties:
+            type:
+              type: string
+              description: sObject API name (e.g., Account, Contact)
+            url:
+              type: string
+              description: REST API URL for this record
+        Name:
+          type: string
+          description: Primary name field of the record
+        CreatedDate:
+          type: string
+          format: date-time
+          description: Timestamp when the record was created
+        LastModifiedDate:
+          type: string
+          format: date-time
+          description: Timestamp when the record was last modified
+        OwnerId:
+          type: string
+          description: ID of the user or queue who owns the record
+        IsDeleted:
+          type: boolean
+          description: Whether the record is in the recycle bin
+      additionalProperties: true
+    ErrorResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          message:
+            type: string
+            description: Error message
+          errorCode:
+            type: string
+            description: Salesforce error code (e.g., ENTITY_IS_DELETED)
+          fields:
+            type: array
+            items:
+              type: string
+            description: Fields that caused the error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token obtained via Salesforce Connected App

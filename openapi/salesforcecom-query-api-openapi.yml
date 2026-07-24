@@ -1,0 +1,164 @@
+openapi: 3.0.0
+info:
+  title: Salesforce REST Composite Query API
+  description: The Salesforce REST API provides programmatic access to Salesforce org data, enabling create, read, update, and delete (CRUD) operations on standard and custom objects, SOQL query execution, metadata retrieval, and org configuration. Supports OAuth 2.0 authentication and returns JSON or XML responses.
+  version: 60.0
+  contact:
+    name: Salesforce Developer
+    url: https://developer.salesforce.com
+  license:
+    name: Salesforce Developer Agreement
+    url: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest
+servers:
+- url: https://{instance}.salesforce.com
+  description: Salesforce org instance
+  variables:
+    instance:
+      default: na1
+      description: Salesforce instance subdomain (e.g. na1, eu6, ap1)
+security:
+- bearerAuth: []
+tags:
+- name: Query
+  description: SOQL query execution
+paths:
+  /services/data/v{version}/query:
+    get:
+      tags:
+      - Query
+      summary: Execute SOQL Query
+      description: Executes a SOQL (Salesforce Object Query Language) query and returns the matching records. Use nextRecordsUrl for pagination when done is false.
+      operationId: executeQuery
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version
+        schema:
+          type: string
+          default: '60.0'
+      - name: q
+        in: query
+        required: true
+        description: SOQL query string (e.g., SELECT Id, Name FROM Account LIMIT 200)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: SOQL query result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+        '400':
+          description: Invalid SOQL query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /services/data/v{version}/queryAll:
+    get:
+      tags:
+      - Query
+      summary: Execute SOQL Query Including Deleted Records
+      description: Executes a SOQL query and returns all matching records including those that have been soft-deleted (in the recycle bin). Equivalent to using the ALL ROWS clause in SOQL.
+      operationId: executeQueryAll
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version
+        schema:
+          type: string
+          default: '60.0'
+      - name: q
+        in: query
+        required: true
+        description: SOQL query string
+        schema:
+          type: string
+      responses:
+        '200':
+          description: SOQL query result including deleted records
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResult'
+components:
+  schemas:
+    sObject:
+      type: object
+      description: A Salesforce standard or custom object record
+      properties:
+        Id:
+          type: string
+          description: Unique 18-character Salesforce record ID
+        attributes:
+          type: object
+          properties:
+            type:
+              type: string
+              description: sObject API name (e.g., Account, Contact)
+            url:
+              type: string
+              description: REST API URL for this record
+        Name:
+          type: string
+          description: Primary name field of the record
+        CreatedDate:
+          type: string
+          format: date-time
+          description: Timestamp when the record was created
+        LastModifiedDate:
+          type: string
+          format: date-time
+          description: Timestamp when the record was last modified
+        OwnerId:
+          type: string
+          description: ID of the user or queue who owns the record
+        IsDeleted:
+          type: boolean
+          description: Whether the record is in the recycle bin
+      additionalProperties: true
+    QueryResult:
+      type: object
+      description: SOQL query result envelope
+      properties:
+        totalSize:
+          type: integer
+          description: Total number of records matching the query
+        done:
+          type: boolean
+          description: Whether all results have been returned
+        nextRecordsUrl:
+          type: string
+          description: URL to retrieve the next page when done is false
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/sObject'
+      required:
+      - totalSize
+      - done
+      - records
+    ErrorResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          message:
+            type: string
+            description: Error message
+          errorCode:
+            type: string
+            description: Salesforce error code (e.g., ENTITY_IS_DELETED)
+          fields:
+            type: array
+            items:
+              type: string
+            description: Fields that caused the error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token obtained via Salesforce Connected App

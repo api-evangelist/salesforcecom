@@ -1,0 +1,57 @@
+openapi: 3.0.0
+info:
+  title: Salesforce REST Composite Versions API
+  description: The Salesforce REST API provides programmatic access to Salesforce org data, enabling create, read, update, and delete (CRUD) operations on standard and custom objects, SOQL query execution, metadata retrieval, and org configuration. Supports OAuth 2.0 authentication and returns JSON or XML responses.
+  version: 60.0
+  contact:
+    name: Salesforce Developer
+    url: https://developer.salesforce.com
+  license:
+    name: Salesforce Developer Agreement
+    url: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest
+servers:
+- url: https://{instance}.salesforce.com
+  description: Salesforce org instance
+  variables:
+    instance:
+      default: na1
+      description: Salesforce instance subdomain (e.g. na1, eu6, ap1)
+security:
+- bearerAuth: []
+tags:
+- name: Versions
+  description: API version information
+paths:
+  /services/data:
+    get:
+      tags:
+      - Versions
+      summary: List Available API Versions
+      description: Returns a list of available Salesforce REST API versions. Use this to determine which API version to use for subsequent requests.
+      operationId: listApiVersions
+      security: []
+      responses:
+        '200':
+          description: List of available API versions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    version:
+                      type: string
+                      description: API version string (e.g., "60.0")
+                    label:
+                      type: string
+                      description: Version label
+                    url:
+                      type: string
+                      description: Base URL for this version
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token obtained via Salesforce Connected App

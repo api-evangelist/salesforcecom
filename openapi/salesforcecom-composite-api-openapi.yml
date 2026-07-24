@@ -1,0 +1,157 @@
+openapi: 3.0.0
+info:
+  title: Salesforce REST Composite API
+  description: The Salesforce REST API provides programmatic access to Salesforce org data, enabling create, read, update, and delete (CRUD) operations on standard and custom objects, SOQL query execution, metadata retrieval, and org configuration. Supports OAuth 2.0 authentication and returns JSON or XML responses.
+  version: 60.0
+  contact:
+    name: Salesforce Developer
+    url: https://developer.salesforce.com
+  license:
+    name: Salesforce Developer Agreement
+    url: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest
+servers:
+- url: https://{instance}.salesforce.com
+  description: Salesforce org instance
+  variables:
+    instance:
+      default: na1
+      description: Salesforce instance subdomain (e.g. na1, eu6, ap1)
+security:
+- bearerAuth: []
+tags:
+- name: Composite
+  description: Composite API for batching multiple operations
+paths:
+  /services/data/v{version}/composite/batch:
+    post:
+      tags:
+      - Composite
+      summary: Execute Composite Batch
+      description: Executes up to 25 subrequests in a single API call. Each subrequest can be a SOQL query, CRUD operation, or metadata retrieval. Failed subrequests do not prevent others from executing (unlike Composite).
+      operationId: compositeBatch
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version
+        schema:
+          type: string
+          default: '60.0'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                batchRequests:
+                  type: array
+                  maxItems: 25
+                  items:
+                    type: object
+                    properties:
+                      method:
+                        type: string
+                        enum:
+                        - GET
+                        - POST
+                        - PATCH
+                        - DELETE
+                      url:
+                        type: string
+                        description: Relative URL for this subrequest
+                      richInput:
+                        type: object
+                        description: Request body for POST/PATCH subrequests
+                haltOnError:
+                  type: boolean
+                  description: Stop processing on first error
+      responses:
+        '200':
+          description: Batch results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hasErrors:
+                    type: boolean
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        statusCode:
+                          type: integer
+                        result:
+                          type: object
+  /services/data/v{version}/composite:
+    post:
+      tags:
+      - Composite
+      summary: Execute Composite Request
+      description: Executes a series of REST API requests in a single call. Allows you to use the output of one subrequest as the input for subsequent subrequests using reference IDs. Supports up to 25 subrequests.
+      operationId: compositeRequest
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version
+        schema:
+          type: string
+          default: '60.0'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                allOrNone:
+                  type: boolean
+                  description: Roll back all subrequests if any fail
+                compositeRequest:
+                  type: array
+                  maxItems: 25
+                  items:
+                    type: object
+                    properties:
+                      method:
+                        type: string
+                        enum:
+                        - GET
+                        - POST
+                        - PATCH
+                        - DELETE
+                      url:
+                        type: string
+                      referenceId:
+                        type: string
+                        description: ID for referencing this result in later subrequests
+                      body:
+                        type: object
+      responses:
+        '200':
+          description: Composite results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  compositeResponse:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        body:
+                          type: object
+                        httpStatusCode:
+                          type: integer
+                        referenceId:
+                          type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token obtained via Salesforce Connected App

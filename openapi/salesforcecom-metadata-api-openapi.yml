@@ -1,0 +1,153 @@
+openapi: 3.0.0
+info:
+  title: Salesforce REST Composite Metadata API
+  description: The Salesforce REST API provides programmatic access to Salesforce org data, enabling create, read, update, and delete (CRUD) operations on standard and custom objects, SOQL query execution, metadata retrieval, and org configuration. Supports OAuth 2.0 authentication and returns JSON or XML responses.
+  version: 60.0
+  contact:
+    name: Salesforce Developer
+    url: https://developer.salesforce.com
+  license:
+    name: Salesforce Developer Agreement
+    url: https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest
+servers:
+- url: https://{instance}.salesforce.com
+  description: Salesforce org instance
+  variables:
+    instance:
+      default: na1
+      description: Salesforce instance subdomain (e.g. na1, eu6, ap1)
+security:
+- bearerAuth: []
+tags:
+- name: Metadata
+  description: sObject metadata and describe operations
+paths:
+  /services/data/v{version}/sobjects:
+    get:
+      tags:
+      - Metadata
+      summary: List All sObjects
+      description: Returns a list of all sObjects available in the Salesforce org, including metadata counts and timestamps for the most recently modified objects.
+      operationId: listSObjects
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version (e.g., 60.0)
+        schema:
+          type: string
+          default: '60.0'
+      responses:
+        '200':
+          description: List of all sObjects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  encoding:
+                    type: string
+                  maxBatchSize:
+                    type: integer
+                  sobjects:
+                    type: array
+                    items:
+                      type: object
+        '401':
+          description: Unauthorized - invalid or expired access token
+  /services/data/v{version}/sobjects/{sObjectName}/describe:
+    get:
+      tags:
+      - Metadata
+      summary: Describe sObject Fields
+      description: Returns the full field-level describe result for the specified sObject type, including all field metadata, picklist values, relationships, and child objects.
+      operationId: describeSObject
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version
+        schema:
+          type: string
+          default: '60.0'
+      - name: sObjectName
+        in: path
+        required: true
+        description: API name of the sObject (e.g., Account, Contact)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Full sObject describe result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SObjectDescribe'
+  /services/data/v{version}/limits:
+    get:
+      tags:
+      - Metadata
+      summary: Get Org Limits
+      description: Returns the limits for your Salesforce org, including current usage and maximum allowed values for API calls, data storage, file storage, and more.
+      operationId: getOrgLimits
+      parameters:
+      - name: version
+        in: path
+        required: true
+        description: Salesforce API version
+        schema:
+          type: string
+          default: '60.0'
+      responses:
+        '200':
+          description: Org limits
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    Max:
+                      type: integer
+                    Remaining:
+                      type: integer
+components:
+  schemas:
+    SObjectDescribe:
+      type: object
+      description: Metadata description of a Salesforce sObject type
+      properties:
+        name:
+          type: string
+          description: API name of the sObject (e.g., Account)
+        label:
+          type: string
+          description: User-facing label
+        labelPlural:
+          type: string
+          description: Plural user-facing label
+        keyPrefix:
+          type: string
+          description: 3-character prefix of the record ID
+        fields:
+          type: array
+          items:
+            type: object
+          description: Field metadata list
+        urls:
+          type: object
+          description: REST endpoint URLs for this sObject
+        createable:
+          type: boolean
+        updateable:
+          type: boolean
+        deleteable:
+          type: boolean
+        queryable:
+          type: boolean
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: OAuth 2.0 Bearer access token obtained via Salesforce Connected App
