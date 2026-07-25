@@ -1,0 +1,24 @@
+{
+  "provider": "salesforcecom",
+  "sources": [
+    "salesforcecom-composite-api-openapi.yml",
+    "salesforcecom-metadata-api-openapi.yml",
+    "salesforcecom-query-api-openapi.yml",
+    "salesforcecom-records-api-openapi.yml",
+    "salesforcecom-search-api-openapi.yml",
+    "salesforcecom-versions-api-openapi.yml"
+  ],
+  "outputs": [
+    "salesforcecom-composite-api-openapi.yml",
+    "salesforcecom-metadata-api-openapi.yml",
+    "salesforcecom-query-api-openapi.yml",
+    "salesforcecom-records-api-openapi.yml",
+    "salesforcecom-search-api-openapi.yml",
+    "salesforcecom-versions-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
